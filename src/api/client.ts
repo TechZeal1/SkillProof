@@ -1,6 +1,7 @@
 import { Challenge, Profile, Submission, Assessment, MentorReview, AssessmentComparison } from '../types/index.ts';
 
 class ApiClient {
+  private readonly baseUrl = 'https://skillproof-3e4o.onrender.com';
   private activeUserId: string = 'usr_alice_chen';
 
   setActiveUserId(id: string) {
@@ -16,14 +17,17 @@ class ApiClient {
     return this.activeUserId;
   }
 
-  private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
+  private async request<T>(
+    endpoint: string,
+    options: RequestInit = {}
+  ): Promise<T> {
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
       'x-user-id': this.getActiveUserId(),
       ...(options.headers as Record<string, string> || {})
     };
 
-    const res = await fetch(endpoint, {
+    const res = await fetch(`${this.baseUrl}${endpoint}`, {
       ...options,
       headers
     });
@@ -34,7 +38,7 @@ class ApiClient {
         const errorJson = await res.json();
         if (errorJson.error) errorMsg = errorJson.error;
       } catch {
-        // ignore
+        // Ignore non-JSON error responses.
       }
       throw new Error(errorMsg);
     }
@@ -66,9 +70,11 @@ class ApiClient {
       method: 'POST',
       body: JSON.stringify(data)
     });
+
     if (res.user?.id) {
       this.setActiveUserId(res.user.id);
     }
+
     return res;
   }
 
@@ -78,16 +84,26 @@ class ApiClient {
   }
 
   async getChallengeBySlug(slug: string): Promise<{ challenge: Challenge }> {
-    return this.request<{ challenge: Challenge }>(`/api/challenges/${slug}`);
+    return this.request<{ challenge: Challenge }>(
+      `/api/challenges/${encodeURIComponent(slug)}`
+    );
   }
 
   // Submissions
-  async getSubmissions(params?: { student_id?: string; challenge_id?: string }): Promise<{
-    submissions: (Submission & { assessment?: Assessment; mentor_review?: MentorReview })[];
+  async getSubmissions(params?: {
+    student_id?: string;
+    challenge_id?: string;
+  }): Promise<{
+    submissions: (Submission & {
+      assessment?: Assessment;
+      mentor_review?: MentorReview;
+    })[];
   }> {
     const query = new URLSearchParams();
+
     if (params?.student_id) query.set('student_id', params.student_id);
     if (params?.challenge_id) query.set('challenge_id', params.challenge_id);
+
     return this.request(`/api/submissions?${query.toString()}`);
   }
 
@@ -97,7 +113,7 @@ class ApiClient {
     assessment?: Assessment;
     mentor_review?: MentorReview;
   }> {
-    return this.request(`/api/submissions/${id}`);
+    return this.request(`/api/submissions/${encodeURIComponent(id)}`);
   }
 
   async createSubmission(data: {
@@ -121,7 +137,7 @@ class ApiClient {
     submission: Submission;
     assessment: Assessment;
   }> {
-    return this.request(`/api/submissions/${id}/assess`, {
+    return this.request(`/api/submissions/${encodeURIComponent(id)}/assess`, {
       method: 'POST'
     });
   }
@@ -139,17 +155,23 @@ class ApiClient {
     submission: Submission;
     mentor_review: MentorReview;
   }> {
-    return this.request(`/api/submissions/${submissionId}/mentor-review`, {
-      method: 'POST',
-      body: JSON.stringify(data)
-    });
+    return this.request(
+      `/api/submissions/${encodeURIComponent(submissionId)}/mentor-review`,
+      {
+        method: 'POST',
+        body: JSON.stringify(data)
+      }
+    );
   }
 
   // Profile
   async getProfile(username: string): Promise<{
     profile: Profile;
     is_owner: boolean;
-    submissions: (Submission & { assessment?: Assessment; mentor_review?: MentorReview })[];
+    submissions: (Submission & {
+      assessment?: Assessment;
+      mentor_review?: MentorReview;
+    })[];
     metrics: {
       total_submissions: number;
       completed_challenges_count: number;
@@ -157,19 +179,30 @@ class ApiClient {
       human_verified_count: number;
     };
   }> {
-    return this.request(`/api/profile/${username}`);
+    return this.request(`/api/profile/${encodeURIComponent(username)}`);
   }
 
-  async updateProfile(username: string, data: Partial<Profile>): Promise<{ success: boolean; profile: Profile }> {
-    return this.request(`/api/profile/${username}`, {
+  async updateProfile(
+    username: string,
+    data: Partial<Profile>
+  ): Promise<{ success: boolean; profile: Profile }> {
+    return this.request(`/api/profile/${encodeURIComponent(username)}`, {
       method: 'PUT',
       body: JSON.stringify(data)
     });
   }
 
   // Comparison
-  async compareSubmissions(subA: string, subB: string): Promise<{ comparison: AssessmentComparison }> {
-    return this.request(`/api/compare?sub_a=${subA}&sub_b=${subB}`);
+  async compareSubmissions(
+    subA: string,
+    subB: string
+  ): Promise<{ comparison: AssessmentComparison }> {
+    const query = new URLSearchParams({
+      sub_a: subA,
+      sub_b: subB
+    });
+
+    return this.request(`/api/compare?${query.toString()}`);
   }
 
   // GitHub Inspection
@@ -189,9 +222,11 @@ class ApiClient {
 
   // Reset Demo
   async resetDemoData(): Promise<{ success: boolean; message: string }> {
-    const res = await this.request<{ success: boolean; message: string }>('/api/demo/reset', {
-      method: 'POST'
-    });
+    const res = await this.request<{ success: boolean; message: string }>(
+      '/api/demo/reset',
+      { method: 'POST' }
+    );
+
     this.setActiveUserId('usr_alice_chen');
     return res;
   }
