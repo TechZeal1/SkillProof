@@ -1,3 +1,4 @@
+
 import express, { Request, Response } from 'express';
 import { createServer as createViteServer } from 'vite';
 import path from 'path';
@@ -13,9 +14,42 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
+
+// CORS: allow the deployed Vercel frontend to call the Render API
+const allowedOrigins = [
+  'https://skill-proof-vert.vercel.app',
+];
+
+app.use((req: Request, res: Response, next) => {
+  const origin = req.headers.origin;
+
+  if (origin && allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Vary', 'Origin');
+    res.setHeader(
+      'Access-Control-Allow-Methods',
+      'GET, POST, PUT, PATCH, DELETE, OPTIONS'
+    );
+    res.setHeader(
+      'Access-Control-Allow-Headers',
+      'Content-Type, x-user-id'
+    );
+  }
+
+  // Handle browser preflight requests
+  if (req.method === 'OPTIONS') {
+    if (origin && allowedOrigins.includes(origin)) {
+      return res.sendStatus(204);
+    }
+    return res.sendStatus(403);
+  }
+
+  next();
+});
+
 app.use(express.json({ limit: '10mb' }));
 
-// Simple in-memory active session (supports header 'x-user-id' or defaults to Alice Chen)
+// Simple in-memory active session
 let currentActiveUserId = 'usr_alice_chen';
 
 function getActiveUser(req: Request): Profile {
@@ -53,18 +87,23 @@ app.post('/api/auth/create-student', (req: Request, res: Response) => {
     return res.status(400).json({ error: 'Username and display name are required' });
   }
 
-  const existing = db.getProfileByUsername(username);
+  const normalizedUsername = username.toLowerCase().replace(/[^a-z0-9_]/g, '');
+  const existing = db.getProfileByUsername(normalizedUsername);
   if (existing) {
     return res.status(409).json({ error: 'Username already taken' });
   }
 
+  if (!normalizedUsername) {
+    return res.status(400).json({ error: 'Please provide a valid username' });
+  }
+
   const newProfile: Profile = {
     id: 'usr_' + Date.now(),
-    username: username.toLowerCase().replace(/[^a-z0-9_]/g, ''),
+    username: normalizedUsername,
     display_name,
     bio: bio || 'Student on SkillProof building verified evidence.',
     university: university || 'University Student',
-    avatar_url: `https://api.dicebear.com/7.x/identicon/svg?seed=${username}`,
+    avatar_url: `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(normalizedUsername)}`,
     github_url: '',
     selected_skills: Array.isArray(selected_skills) ? selected_skills : ['JavaScript', 'HTML & CSS'],
     is_public: true,
@@ -103,16 +142,11 @@ app.get('/api/submissions', (req: Request, res: Response) => {
     subs = subs.filter(s => s.challenge_id === challengeId);
   }
 
-  // Attach associated assessments & mentor reviews
-  const populated = subs.map(sub => {
-    const assessment = db.getAssessmentBySubmissionId(sub.id);
-    const mentorReview = db.getMentorReviewBySubmissionId(sub.id);
-    return {
-      ...sub,
-      assessment,
-      mentor_review: mentorReview
-    };
-  });
+  const populated = subs.map(sub => ({
+    ...sub,
+    assessment: db.getAssessmentBySubmissionId(sub.id),
+    mentor_review: db.getMentorReviewBySubmissionId(sub.id)
+  }));
 
   res.json({ submissions: populated });
 });
@@ -123,15 +157,12 @@ app.get('/api/submissions/:id', (req: Request, res: Response) => {
   if (!sub) {
     return res.status(404).json({ error: 'Submission not found' });
   }
-  const challenge = db.getChallengeById(sub.challenge_id);
-  const assessment = db.getAssessmentBySubmissionId(sub.id);
-  const mentorReview = db.getMentorReviewBySubmissionId(sub.id);
 
   res.json({
     submission: sub,
-    challenge,
-    assessment,
-    mentor_review: mentorReview
+    challenge: db.getChallengeById(sub.challenge_id),
+    assessment: db.getAssessmentBySubmissionId(sub.id),
+    mentor_review: db.getMentorReviewBySubmissionId(sub.id)
   });
 });
 
@@ -156,9 +187,7 @@ app.post('/api/submissions', (req: Request, res: Response) => {
     return res.status(404).json({ error: 'Challenge not found' });
   }
 
-  // Count existing attempts for this student & challenge
   const previous = db.getSubmissions(user.id).filter(s => s.challenge_id === challenge_id);
-  const attempt_number = previous.length + 1;
 
   const newSub: Submission = {
     id: 'sub_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
@@ -173,7 +202,7 @@ app.post('/api/submissions', (req: Request, res: Response) => {
     project_url: project_url || undefined,
     source_code: source_code || undefined,
     explanation: explanation || undefined,
-    attempt_number,
+    attempt_number: previous.length + 1,
     status: is_draft ? 'draft' : 'submitted',
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString()
@@ -196,30 +225,19 @@ app.post('/api/submissions/:id/assess', async (req: Request, res: Response) => {
     return res.status(404).json({ error: 'Associated challenge not found' });
   }
 
-  // Update status to evaluating
   submission.status = 'evaluating';
   db.saveSubmission(submission);
 
   try {
-    const assessment = await evaluateSubmissionWithAI({
-      submission,
-      challenge
-    });
+    const assessment = await evaluateSubmissionWithAI({ submission, challenge });
 
-    // Save assessment to database
     db.saveAssessment(assessment);
-
-    // Update submission status to ai_assessed
     submission.status = 'ai_assessed';
     db.saveSubmission(submission);
 
-    res.json({
-      success: true,
-      submission,
-      assessment
-    });
+    res.json({ success: true, submission, assessment });
   } catch (error: any) {
-    submission.status = 'submitted'; // revert from evaluating
+    submission.status = 'submitted';
     db.saveSubmission(submission);
     res.status(500).json({
       error: error.message || 'AI assessment failed. Please check server logs and configuration.'
@@ -227,11 +245,10 @@ app.post('/api/submissions/:id/assess', async (req: Request, res: Response) => {
   }
 });
 
-// 5. Mentor Review (Role Protected)
+// 5. Mentor Review
 app.post('/api/submissions/:id/mentor-review', (req: Request, res: Response) => {
   const user = getActiveUser(req);
-  
-  // Authorization check
+
   if (user.role !== 'mentor' && user.role !== 'admin') {
     return res.status(403).json({
       error: 'Unauthorized: Only verified mentors can submit a human verification review.'
@@ -249,33 +266,33 @@ app.post('/api/submissions/:id/mentor-review', (req: Request, res: Response) => 
     return res.status(400).json({ error: 'verification_status and feedback are required' });
   }
 
+  if (!['verified', 'declined', 'changes_requested'].includes(verification_status)) {
+    return res.status(400).json({ error: 'Invalid verification_status' });
+  }
+
   const mentorReview: MentorReview = {
     id: 'rev_' + Date.now(),
     submission_id: submission.id,
     mentor_id: user.id,
     mentor_name: user.display_name,
     mentor_title: user.bio ? user.bio.slice(0, 60) : 'Technical Mentor',
-    verification_status: verification_status,
-    feedback: feedback.trim(),
+    verification_status,
+    feedback: String(feedback).trim(),
     criteria_confirmed: Boolean(criteria_confirmed),
     reviewed_at: new Date().toISOString()
   };
 
   db.saveMentorReview(mentorReview);
 
-  // Update submission status
   if (verification_status === 'verified') {
     submission.status = 'human_verified';
   } else if (verification_status === 'changes_requested') {
     submission.status = 'revision_requested';
   }
+
   db.saveSubmission(submission);
 
-  res.json({
-    success: true,
-    submission,
-    mentor_review: mentorReview
-  });
+  res.json({ success: true, submission, mentor_review: mentorReview });
 });
 
 // 6. Public or Authenticated Profile
@@ -289,36 +306,26 @@ app.get('/api/profile/:username', (req: Request, res: Response) => {
   const currentUser = getActiveUser(req);
   const isOwner = currentUser.id === profile.id;
 
-  // Filter submissions
   let subs = db.getSubmissions(profile.id);
   if (!isOwner && !profile.is_public) {
     return res.status(403).json({ error: 'This profile is private.' });
   }
 
-  // Filter out drafts if not owner
   if (!isOwner) {
     subs = subs.filter(s => s.status !== 'draft');
   }
 
-  const populatedSubs = subs.map(sub => {
-    const assessment = db.getAssessmentBySubmissionId(sub.id);
-    const mentorReview = db.getMentorReviewBySubmissionId(sub.id);
-    return {
-      ...sub,
-      assessment,
-      mentor_review: mentorReview
-    };
-  });
+  const populatedSubs = subs.map(sub => ({
+    ...sub,
+    assessment: db.getAssessmentBySubmissionId(sub.id),
+    mentor_review: db.getMentorReviewBySubmissionId(sub.id)
+  }));
 
-  // Calculate statistics from real data
   const completedChallenges = new Set(
     populatedSubs
       .filter(s => s.status === 'ai_assessed' || s.status === 'human_verified')
       .map(s => s.challenge_id)
   );
-
-  const humanVerifiedCount = populatedSubs.filter(s => s.status === 'human_verified').length;
-  const aiAssessedCount = populatedSubs.filter(s => s.status === 'ai_assessed').length;
 
   res.json({
     profile,
@@ -327,8 +334,8 @@ app.get('/api/profile/:username', (req: Request, res: Response) => {
     metrics: {
       total_submissions: populatedSubs.length,
       completed_challenges_count: completedChallenges.size,
-      ai_assessed_count: aiAssessedCount,
-      human_verified_count: humanVerifiedCount
+      ai_assessed_count: populatedSubs.filter(s => s.status === 'ai_assessed').length,
+      human_verified_count: populatedSubs.filter(s => s.status === 'human_verified').length
     }
   });
 });
@@ -351,6 +358,7 @@ app.put('/api/profile/:username', (req: Request, res: Response) => {
   if (github_url !== undefined) profile.github_url = github_url;
   if (selected_skills !== undefined) profile.selected_skills = selected_skills;
   if (is_public !== undefined) profile.is_public = Boolean(is_public);
+  profile.updated_at = new Date().toISOString();
 
   const saved = db.saveProfile(profile);
   res.json({ success: true, profile: saved });
@@ -378,10 +386,12 @@ app.get('/api/compare', (req: Request, res: Response) => {
   }
 
   const scoreDelta = asmtB.overall_score - asmtA.overall_score;
-
   const criteriaDeltas = asmtB.criteria.map(critB => {
-    const critA = asmtA.criteria.find(c => c.criterion_id === critB.criterion_id || c.name === critB.name);
+    const critA = asmtA.criteria.find(
+      c => c.criterion_id === critB.criterion_id || c.name === critB.name
+    );
     const scoreA = critA ? critA.score : 0;
+
     return {
       criterionName: critB.name,
       scoreA,
@@ -404,32 +414,44 @@ app.get('/api/compare', (req: Request, res: Response) => {
 // 8. Public GitHub Repo Inspector
 app.post('/api/github/fetch-repo', async (req: Request, res: Response) => {
   const { repositoryUrl } = req.body;
-  if (!repositoryUrl) {
+
+  if (typeof repositoryUrl !== 'string' || !repositoryUrl.trim()) {
     return res.status(400).json({ error: 'repositoryUrl is required' });
   }
 
-  // Parse GitHub owner & repo
-  const match = repositoryUrl.match(/github\.com\/([^\/]+)\/([^\/\#\?]+)/);
-  if (!match) {
+  let parsedUrl: URL;
+  try {
+    parsedUrl = new URL(repositoryUrl);
+  } catch {
     return res.status(400).json({ error: 'Invalid GitHub repository URL format' });
   }
 
-  const owner = match[1];
-  const repo = match[2].replace(/\.git$/, '');
+  if (parsedUrl.hostname !== 'github.com') {
+    return res.status(400).json({ error: 'Only public GitHub repository URLs are supported' });
+  }
+
+  const parts = parsedUrl.pathname.split('/').filter(Boolean);
+  if (parts.length < 2) {
+    return res.status(400).json({ error: 'Invalid GitHub repository URL format' });
+  }
+
+  const owner = parts[0];
+  const repo = parts[1].replace(/\.git$/, '');
 
   try {
-    // Attempt to fetch default branch README or file tree
-    const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents`;
+    const apiUrl = `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/contents`;
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 6000);
 
-    const ghRes = await fetch(apiUrl, {
-      signal: controller.signal,
-      headers: {
-        'User-Agent': 'SkillProof-Hackathon-Evaluator'
-      }
-    });
-    clearTimeout(timeout);
+    let ghRes: globalThis.Response;
+    try {
+      ghRes = await fetch(apiUrl, {
+        signal: controller.signal,
+        headers: { 'User-Agent': 'SkillProof-Hackathon-Evaluator' }
+      });
+    } finally {
+      clearTimeout(timeout);
+    }
 
     if (!ghRes.ok) {
       return res.status(422).json({
@@ -450,17 +472,16 @@ app.post('/api/github/fetch-repo', async (req: Request, res: Response) => {
       download_url: f.download_url
     }));
 
-    // Find primary code files: index.html, App.tsx, app.js, script.js, or README.md
-    const candidate = fileList.find(f => 
+    const candidate = fileList.find((f: any) =>
       /^(index\.html|app\.(js|ts|jsx|tsx)|main\.(js|ts|jsx|tsx)|readme\.md)$/i.test(f.name)
     );
 
     let snippet = '';
-    if (candidate && candidate.download_url) {
+    if (candidate?.download_url) {
       const fileFetch = await fetch(candidate.download_url);
       if (fileFetch.ok) {
-        const text = await fileFetch.text();
-        snippet = `// [Extracted from ${candidate.name}]\n` + text.slice(0, 15000);
+        const sourceText = await fileFetch.text();
+        snippet = `// [Extracted from ${candidate.name}]\n` + sourceText.slice(0, 15000);
       }
     }
 
@@ -468,7 +489,7 @@ app.post('/api/github/fetch-repo', async (req: Request, res: Response) => {
       success: true,
       owner,
       repo,
-      files: fileList.map(f => f.name),
+      files: fileList.map((f: any) => f.name),
       primaryFile: candidate?.name,
       extractedSnippet: snippet
     });
