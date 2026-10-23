@@ -1,0 +1,552 @@
+{
+  "profiles": [
+    {
+      "id": "usr_alice_chen",
+      "username": "alice_chen",
+      "display_name": "Alice Chen",
+      "bio": "CS student at Stanford focusing on accessible web architecture and responsive systems.",
+      "university": "Stanford University",
+      "avatar_url": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+      "github_url": "https://github.com/alicechen-dev",
+      "selected_skills": [
+        "JavaScript",
+        "React",
+        "CSS Architecture",
+        "Accessibility",
+        "Form Handling"
+      ],
+      "is_public": true,
+      "role": "student",
+      "created_at": "2026-09-12T10:00:00Z",
+      "updated_at": "2026-10-20T14:30:00Z"
+    },
+    {
+      "id": "usr_mentor_sarah",
+      "username": "mentor_sarah",
+      "display_name": "Dr. Sarah Marcus",
+      "bio": "Lead Technical Mentor & Staff Engineer. Reviewing student evidence for correctness and accessibility.",
+      "university": "Stanford Web Systems Lab",
+      "avatar_url": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80",
+      "github_url": "https://github.com/smarcus-eng",
+      "selected_skills": [
+        "Frontend Architecture",
+        "Code Review",
+        "Web Standards"
+      ],
+      "is_public": true,
+      "role": "mentor",
+      "created_at": "2026-08-01T08:00:00Z",
+      "updated_at": "2026-10-15T09:00:00Z"
+    }
+  ],
+  "challenges": [
+    {
+      "id": "ch_login_page",
+      "slug": "responsive-login-page",
+      "title": "Responsive Login Page",
+      "description": "Build a production-ready, accessible login interface with client-side validation, accessible form controls, loading state, and fluid responsive styling across mobile and desktop viewports.",
+      "skill_category": "Web Development",
+      "difficulty": "beginner",
+      "estimated_minutes": 25,
+      "requirements": [
+        "Semantic <form> with explicitly associated <label> elements for email and password fields.",
+        "Input validation checking valid email format and password minimum length (8 characters).",
+        "Descriptive inline error messages linked to inputs via aria-describedby when invalid.",
+        "Responsive centered card container that adapts gracefully below 640px width without horizontal scroll.",
+        "Interactive submit button with clear hover, focus-visible outline, and disabled/loading state."
+      ],
+      "acceptance_criteria": [
+        "All inputs use appropriate type attributes (\"email\", \"password\").",
+        "Form submission is intercepted with preventDefault and triggers field-level validation.",
+        "Errors clear appropriately when user types valid input.",
+        "Mobile viewport tested to prevent overflowing inputs or clipped padding."
+      ],
+      "starter_filename": "login.html",
+      "starter_code": "<!-- Starter Code: Responsive Login Page -->\n<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <title>Login | SkillProof</title>\n  <style>\n    /* TODO: Implement responsive centered layout and focus states */\n    body { font-family: system-ui, sans-serif; margin: 0; padding: 1rem; }\n    .card { max-width: 400px; margin: 40px auto; border: 1px solid #e2e8f0; padding: 24px; border-radius: 8px; }\n    .form-group { margin-bottom: 16px; }\n    label { display: block; margin-bottom: 6px; font-weight: 500; font-size: 14px; }\n    input { width: 100%; box-sizing: border-box; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; }\n    .error { color: #dc2626; font-size: 13px; margin-top: 4px; display: none; }\n    button { width: 100%; padding: 10px; background: #4f46e5; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; }\n  </style>\n</head>\n<body>\n  <div class=\"card\">\n    <h2>Welcome back</h2>\n    <form id=\"loginForm\" novalidate>\n      <div class=\"form-group\">\n        <label for=\"email\">Email address</label>\n        <input type=\"email\" id=\"email\" name=\"email\" required />\n        <div id=\"emailError\" class=\"error\">Please enter a valid email.</div>\n      </div>\n      <div class=\"form-group\">\n        <label for=\"password\">Password</label>\n        <input type=\"password\" id=\"password\" name=\"password\" required />\n        <div id=\"passwordError\" class=\"error\">Password must be at least 8 characters.</div>\n      </div>\n      <button type=\"submit\">Sign in</button>\n    </form>\n  </div>\n  <script>\n    // TODO: Add submit handler with validation and error toggling\n  </script>\n</body>\n</html>",
+      "rubric": {
+        "total_points": 100,
+        "criteria": [
+          {
+            "id": "crit_login_func",
+            "name": "Required Functionality & Form Handling",
+            "description": "Implements event prevention, email format checking, password constraint, and form submit flow.",
+            "weight": 35,
+            "max_score": 35
+          },
+          {
+            "id": "crit_login_a11y",
+            "name": "Semantic HTML & Accessibility",
+            "description": "Use of semantic elements, explicit label-for association, aria-describedby, and visible focus rings.",
+            "weight": 25,
+            "max_score": 25
+          },
+          {
+            "id": "crit_login_responsive",
+            "name": "UI & Responsive Layout",
+            "description": "Mobile-first or fluid centered layout, spacing math, typography hierarchy, and viewport resilience.",
+            "weight": 20,
+            "max_score": 20
+          },
+          {
+            "id": "crit_login_validation",
+            "name": "Input Validation & Edge Cases",
+            "description": "Trimming whitespace, real-time or blur re-validation, and user-friendly error copy.",
+            "weight": 10,
+            "max_score": 10
+          },
+          {
+            "id": "crit_login_code",
+            "name": "Code Cleanliness & Maintainability",
+            "description": "Clean modular JavaScript/CSS, descriptive identifiers, and separation of concerns.",
+            "weight": 10,
+            "max_score": 10
+          }
+        ]
+      },
+      "is_published": true,
+      "created_at": "2026-09-01T00:00:00Z"
+    },
+    {
+      "id": "ch_task_manager",
+      "slug": "interactive-task-manager",
+      "title": "Interactive Task Manager",
+      "description": "Implement a complete interactive task manager that handles task addition, completion toggling, deletion, filtering (All, Active, Completed), duplicate prevention, and persistent browser storage.",
+      "skill_category": "Web Development",
+      "difficulty": "intermediate",
+      "estimated_minutes": 40,
+      "requirements": [
+        "Text input to add tasks, rejecting empty strings and whitespace-only submissions.",
+        "Checkboxes or toggle buttons to mark items completed with visual strike-through / dimming.",
+        "Delete action per task with keyboard accessibility.",
+        "Live task counter displaying active remaining items.",
+        "Filter tabs: \"All\", \"Active\", and \"Completed\" with clean client-side state filtering.",
+        "LocalStorage persistence so state is restored on page reload.",
+        "Duplicate task prevention with friendly warning feedback."
+      ],
+      "acceptance_criteria": [
+        "Pressing Enter in the input adds the task immediately.",
+        "Tasks cannot be added with duplicate titles (case-insensitive trim check).",
+        "Filter buttons update view instantaneously without page reloading.",
+        "Deleting all items leaves an informative, clean empty state."
+      ],
+      "starter_filename": "task-manager.js",
+      "starter_code": "// Starter Code: Interactive Task Manager\nclass TaskManager {\n  constructor(rootElement) {\n    this.root = rootElement;\n    this.tasks = this.loadTasks();\n    this.currentFilter = 'all'; // 'all' | 'active' | 'completed'\n    this.init();\n  }\n\n  loadTasks() {\n    // TODO: Retrieve from localStorage safely with JSON.parse error handling\n    return [];\n  }\n\n  saveTasks() {\n    // TODO: Persist this.tasks to localStorage\n  }\n\n  addTask(title) {\n    // TODO: Validate title is non-empty after trim()\n    // TODO: Prevent duplicate titles\n    // TODO: Push new item { id: crypto.randomUUID(), title, completed: false, createdAt: Date.now() }\n    // TODO: saveTasks() and render()\n  }\n\n  toggleTask(id) {\n    // TODO: Toggle completed boolean\n  }\n\n  deleteTask(id) {\n    // TODO: Filter out task by id\n  }\n\n  setFilter(filter) {\n    // TODO: Update filter and re-render\n  }\n\n  render() {\n    // TODO: Render filtered tasks and active counter\n  }\n}",
+      "rubric": {
+        "total_points": 100,
+        "criteria": [
+          {
+            "id": "crit_task_func",
+            "name": "Required Functionality & State Management",
+            "description": "Adding, completing, deleting tasks, filter tabs, and persistence to localStorage.",
+            "weight": 35,
+            "max_score": 35
+          },
+          {
+            "id": "crit_task_arch",
+            "name": "Code Correctness & Architecture",
+            "description": "Immutable state updates, safe JSON parsing, decoupled DOM rendering, and clean lifecycle.",
+            "weight": 25,
+            "max_score": 25
+          },
+          {
+            "id": "crit_task_ui",
+            "name": "UI & Responsive Interaction",
+            "description": "Intuitive micro-interactions, empty states, task counters, and keyboard accessibility (Enter/Esc).",
+            "weight": 20,
+            "max_score": 20
+          },
+          {
+            "id": "crit_task_validation",
+            "name": "Input Validation & Edge Cases",
+            "description": "Whitespace sanitization, duplicate title rejection, boundary limits, and long string handling.",
+            "weight": 10,
+            "max_score": 10
+          },
+          {
+            "id": "crit_task_readability",
+            "name": "Readability & Maintainability",
+            "description": "Predictable variable naming, typed interfaces, descriptive comments, and modular structure.",
+            "weight": 10,
+            "max_score": 10
+          }
+        ]
+      },
+      "is_published": true,
+      "created_at": "2026-09-05T00:00:00Z"
+    },
+    {
+      "id": "ch_debug_webpage",
+      "slug": "debug-broken-webpage",
+      "title": "Debug the Broken Webpage",
+      "description": "Diagnose and fix 4 critical intentional bugs across HTML, CSS, JavaScript, and security/sanitization in a broken shopping cart preview, providing a detailed root-cause explanation for each fix.",
+      "skill_category": "Web Development",
+      "difficulty": "intermediate",
+      "estimated_minutes": 25,
+      "requirements": [
+        "Bug 1: Fix form submit loop caused by missing preventDefault or button attributes.",
+        "Bug 2: Fix unhandled Promise rejection and asynchronous rendering race condition in data fetching.",
+        "Bug 3: Fix CSS flex layout break causing horizontal viewport blowout on mobile screens (< 480px).",
+        "Bug 4: Fix XSS vulnerability where user review comments are injected with unescaped innerHTML.",
+        "Provide a clear, written 4-part explanation detailing what caused each bug and how your solution fixes it."
+      ],
+      "acceptance_criteria": [
+        "Submitting checkout does not trigger full page refresh.",
+        "Item quantities recalculate total correctly using Number coercion to avoid string concatenation.",
+        "No text or card spills over screen boundary on mobile width.",
+        "User-provided string comments are rendered safely using textContent or safe DOM nodes.",
+        "Written explanations accurately identify the root causes."
+      ],
+      "starter_filename": "broken-cart.js",
+      "starter_code": "// Starter Code with 4 Intentional Bugs:\n// Bug 1: Form triggers full browser reload and loses state\ndocument.getElementById('checkout-form').addEventListener('submit', (e) => {\n  // MISSING: e.preventDefault();\n  processCheckout();\n});\n\n// Bug 2: Asynchronous race condition and type coercion bug\nasync function updateCartTotal(items) {\n  // Bug: price string '19.99' + quantity '2' results in '19.992' string concatenation\n  let total = 0;\n  items.forEach(async (item) => {\n    // async forEach doesn't wait!\n    const price = await fetchItemPrice(item.id); \n    total += price * item.quantity;\n  });\n  document.getElementById('total-display').innerText = total; // Runs before async completes!\n}\n\n// Bug 3: CSS overflow bug breaking mobile screens\n/*\n  .cart-container { display: flex; width: 850px; } \n  Fixed width forces 850px even on 375px mobile screens!\n*/\n\n// Bug 4: Dangerous XSS injection\nfunction renderCustomerNote(noteText) {\n  // Danger: innerHTML allows malicious script/img tag injection\n  document.getElementById('note-preview').innerHTML = \"<b>Note:</b> \" + noteText;\n}",
+      "rubric": {
+        "total_points": 100,
+        "criteria": [
+          {
+            "id": "crit_debug_fixes",
+            "name": "Accuracy of Bug Fixes",
+            "description": "Correctly addresses all 4 bugs: form reload, async data race & coercion, layout overflow, and XSS injection.",
+            "weight": 40,
+            "max_score": 40
+          },
+          {
+            "id": "crit_debug_explanation",
+            "name": "Root Cause Analysis & Explanation",
+            "description": "Depth, technical precision, and clarity of the written explanation for each defect.",
+            "weight": 25,
+            "max_score": 25
+          },
+          {
+            "id": "crit_debug_security",
+            "name": "Security & Defensive Coding",
+            "description": "Proper sanitization (textContent / text nodes) and safe async handling (Promise.all).",
+            "weight": 20,
+            "max_score": 20
+          },
+          {
+            "id": "crit_debug_regressions",
+            "name": "Prevention of Regressions",
+            "description": "Clean integration without introducing secondary styling or functional flaws.",
+            "weight": 15,
+            "max_score": 15
+          }
+        ]
+      },
+      "is_published": true,
+      "created_at": "2026-09-10T00:00:00Z"
+    },
+    {
+      "id": "ch_api_fetcher",
+      "slug": "rest-api-fetcher",
+      "title": "REST API Data Fetcher & Cache",
+      "description": "Build an async data fetcher component featuring loading skeletons, exponential retry logic, client-side memory caching, search filtering, and robust HTTP error boundaries.",
+      "skill_category": "JavaScript & API",
+      "difficulty": "intermediate",
+      "estimated_minutes": 35,
+      "requirements": [
+        "Async fetch with AbortController for request cancellation on unmount/search change.",
+        "In-memory cache with TTL (Time-To-Live) to avoid redundant network round-trips.",
+        "Graceful loading state with visual skeleton placeholder.",
+        "Explanatory error state with an interactive \"Retry\" button.",
+        "Debounced search input (300ms) to filter returned items by name/tag."
+      ],
+      "acceptance_criteria": [
+        "Rapid typing in search cancels previous in-flight requests.",
+        "Cached requests return instantly without showing full loading skeleton.",
+        "Network failures (e.g. 500 status) display friendly user explanation and retry capability."
+      ],
+      "starter_filename": "fetcher.ts",
+      "starter_code": "// Starter Code: API Data Fetcher with Cache\ninterface CacheEntry<T> {\n  data: T;\n  timestamp: number;\n}\n\nexport class CachedFetcher<T> {\n  private cache = new Map<string, CacheEntry<T>>();\n  private ttlMs: number;\n\n  constructor(ttlMs: number = 60000) {\n    this.ttlMs = ttlMs;\n  }\n\n  async fetch(url: string, signal?: AbortSignal): Promise<T> {\n    // TODO: Check if URL in cache and Date.now() - timestamp < this.ttlMs\n    // TODO: If not cached, perform fetch(url, { signal })\n    // TODO: Handle HTTP non-200 responses with descriptive error\n    // TODO: Store response in cache and return data\n    throw new Error('Not implemented');\n  }\n\n  invalidate(url?: string): void {\n    // TODO: Clear cache entry or entire cache\n  }\n}",
+      "rubric": {
+        "total_points": 100,
+        "criteria": [
+          {
+            "id": "crit_api_async",
+            "name": "Async Data Flow & Error Handling",
+            "description": "Proper try/catch, HTTP status checking, retry mechanism, and AbortController cancellation.",
+            "weight": 35,
+            "max_score": 35
+          },
+          {
+            "id": "crit_api_cache",
+            "name": "Performance & Caching Strategy",
+            "description": "Accurate TTL expiration check, memory leak avoidance, and instant cache hit return.",
+            "weight": 25,
+            "max_score": 25
+          },
+          {
+            "id": "crit_api_ui",
+            "name": "UI States & Accessibility",
+            "description": "Distinct loading, error, empty, and populated states with visible focus and aria-live announcements.",
+            "weight": 20,
+            "max_score": 20
+          },
+          {
+            "id": "crit_api_types",
+            "name": "TypeScript & Code Architecture",
+            "description": "Strict type safety, generic parameters, and decoupled testable methods.",
+            "weight": 20,
+            "max_score": 20
+          }
+        ]
+      },
+      "is_published": true,
+      "created_at": "2026-09-18T00:00:00Z"
+    }
+  ],
+  "submissions": [
+    {
+      "id": "sub_alice_tm_1",
+      "student_id": "usr_alice_chen",
+      "student_name": "Alice Chen",
+      "student_username": "alice_chen",
+      "challenge_id": "ch_task_manager",
+      "challenge_title": "Interactive Task Manager",
+      "challenge_slug": "interactive-task-manager",
+      "submission_type": "code",
+      "source_code": "// Alice Chen - Attempt 1\nconst taskList = [];\n\nfunction addTask() {\n  const input = document.getElementById('taskInput');\n  const title = input.value;\n  if (title === '') return; // Simple check\n  \n  taskList.push({ id: Date.now(), title: title, completed: false });\n  input.value = '';\n  render();\n}\n\nfunction toggleTask(id) {\n  const item = taskList.find(t => t.id === id);\n  if (item) item.completed = !item.completed;\n  render();\n}\n\nfunction deleteTask(id) {\n  const idx = taskList.findIndex(t => t.id === id);\n  if (idx !== -1) taskList.splice(idx, 1);\n  render();\n}\n\nfunction render() {\n  const container = document.getElementById('tasks');\n  container.innerHTML = '';\n  taskList.forEach(t => {\n    const el = document.createElement('div');\n    el.innerHTML = `<input type=\"checkbox\" ${t.completed ? 'checked' : ''} onclick=\"toggleTask(${t.id})\"> ${t.title} <button onclick=\"deleteTask(${t.id})\">Delete</button>`;\n    container.appendChild(el);\n  });\n  localStorage.setItem('tasks', JSON.stringify(taskList));\n}",
+      "explanation": "Basic task manager implementation. Added tasks, deletion, and stored to localStorage.",
+      "attempt_number": 1,
+      "status": "ai_assessed",
+      "created_at": "2026-10-14T11:20:00Z",
+      "updated_at": "2026-10-14T11:22:00Z"
+    },
+    {
+      "id": "sub_alice_tm_2",
+      "student_id": "usr_alice_chen",
+      "student_name": "Alice Chen",
+      "student_username": "alice_chen",
+      "challenge_id": "ch_task_manager",
+      "challenge_title": "Interactive Task Manager",
+      "challenge_slug": "interactive-task-manager",
+      "submission_type": "code",
+      "source_code": "// Alice Chen - Attempt 2 (Refactored based on AI feedback)\nclass TaskApp {\n  constructor() {\n    this.tasks = this.loadSafe();\n    this.filter = 'all'; // 'all' | 'active' | 'completed'\n    this.input = document.getElementById('taskInput');\n    this.listContainer = document.getElementById('tasks');\n    this.counterEl = document.getElementById('taskCounter');\n    this.errorEl = document.getElementById('taskError');\n    \n    this.bindEvents();\n    this.render();\n  }\n\n  loadSafe() {\n    try {\n      const data = localStorage.getItem('skillproof_tasks_v2');\n      return data ? JSON.parse(data) : [];\n    } catch (e) {\n      console.warn('Corrupt storage, resetting:', e);\n      return [];\n    }\n  }\n\n  save() {\n    localStorage.setItem('skillproof_tasks_v2', JSON.stringify(this.tasks));\n  }\n\n  addTask(rawTitle) {\n    const title = rawTitle.trim();\n    if (!title) {\n      this.showError('Task title cannot be empty or whitespace.');\n      return false;\n    }\n\n    // Duplicate prevention (case-insensitive)\n    const exists = this.tasks.some(t => t.title.toLowerCase() === title.toLowerCase());\n    if (exists) {\n      this.showError('A task with this name already exists.');\n      return false;\n    }\n\n    this.clearError();\n    const newTask = {\n      id: crypto.randomUUID ? crypto.randomUUID() : 'task_' + Date.now(),\n      title,\n      completed: false,\n      createdAt: new Date().toISOString()\n    };\n\n    this.tasks.unshift(newTask);\n    this.save();\n    this.render();\n    return true;\n  }\n\n  toggleTask(id) {\n    this.tasks = this.tasks.map(t => t.id === id ? { ...t, completed: !t.completed } : t);\n    this.save();\n    this.render();\n  }\n\n  deleteTask(id) {\n    this.tasks = this.tasks.filter(t => t.id !== id);\n    this.save();\n    this.render();\n  }\n\n  setFilter(filter) {\n    this.filter = filter;\n    this.render();\n  }\n\n  showError(msg) {\n    if (this.errorEl) {\n      this.errorEl.textContent = msg;\n      this.errorEl.hidden = false;\n    }\n  }\n\n  clearError() {\n    if (this.errorEl) {\n      this.errorEl.textContent = '';\n      this.errorEl.hidden = true;\n    }\n  }\n\n  getFilteredTasks() {\n    if (this.filter === 'active') return this.tasks.filter(t => !t.completed);\n    if (this.filter === 'completed') return this.tasks.filter(t => t.completed);\n    return this.tasks;\n  }\n\n  render() {\n    const filtered = this.getFilteredTasks();\n    this.listContainer.innerHTML = '';\n    \n    if (filtered.length === 0) {\n      const empty = document.createElement('p');\n      empty.className = 'text-slate-400 text-sm py-4 text-center';\n      empty.textContent = this.filter === 'all' ? 'No tasks yet. Add one above!' : `No ${this.filter} tasks found.`;\n      this.listContainer.appendChild(empty);\n    } else {\n      filtered.forEach(task => {\n        const item = document.createElement('div');\n        item.className = 'flex items-center justify-between p-3 border-b border-slate-100 hover:bg-slate-50';\n        \n        const left = document.createElement('label');\n        left.className = 'flex items-center gap-3 cursor-pointer select-none';\n        \n        const check = document.createElement('input');\n        check.type = 'checkbox';\n        check.checked = task.completed;\n        check.className = 'rounded text-indigo-600 focus:ring-indigo-500';\n        check.addEventListener('change', () => this.toggleTask(task.id));\n        \n        const span = document.createElement('span');\n        span.textContent = task.title;\n        if (task.completed) span.className = 'line-through text-slate-400';\n        \n        left.appendChild(check);\n        left.appendChild(span);\n        \n        const delBtn = document.createElement('button');\n        delBtn.type = 'button';\n        delBtn.textContent = 'Delete';\n        delBtn.className = 'text-xs text-rose-500 hover:text-rose-700 px-2 py-1';\n        delBtn.setAttribute('aria-label', `Delete task \"${task.title}\"`);\n        delBtn.addEventListener('click', () => this.deleteTask(task.id));\n        \n        item.appendChild(left);\n        item.appendChild(delBtn);\n        this.listContainer.appendChild(item);\n      });\n    }\n\n    const activeCount = this.tasks.filter(t => !t.completed).length;\n    if (this.counterEl) {\n      this.counterEl.textContent = `${activeCount} active item${activeCount === 1 ? '' : 's'} remaining`;\n    }\n  }\n\n  bindEvents() {\n    this.input.addEventListener('keydown', (e) => {\n      if (e.key === 'Enter') {\n        if (this.addTask(this.input.value)) {\n          this.input.value = '';\n        }\n      }\n    });\n  }\n}",
+      "explanation": "Attempt 2 addresses all Attempt 1 feedback: added duplicate prevention, whitespace trimming, safe JSON parse fallback, filter tabs (All/Active/Completed), and accessible delete buttons with aria-labels.",
+      "attempt_number": 2,
+      "status": "ai_assessed",
+      "created_at": "2026-10-18T16:45:00Z",
+      "updated_at": "2026-10-18T16:48:00Z"
+    },
+    {
+      "id": "sub_alice_login_1",
+      "student_id": "usr_alice_chen",
+      "student_name": "Alice Chen",
+      "student_username": "alice_chen",
+      "challenge_id": "ch_login_page",
+      "challenge_title": "Responsive Login Page",
+      "challenge_slug": "responsive-login-page",
+      "submission_type": "code",
+      "source_code": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <title>Accessible Login | SkillProof Verified</title>\n  <style>\n    :root { --primary: #4f46e5; --error: #dc2626; --slate-900: #0f172a; }\n    body { font-family: system-ui, -apple-system, sans-serif; background: #f8fafc; color: var(--slate-900); min-height: 100vh; display: grid; place-items: center; margin: 0; padding: 16px; }\n    .card { background: #fff; width: 100%; max-width: 420px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); padding: 32px 24px; box-sizing: border-box; }\n    h1 { font-size: 1.5rem; margin-top: 0; margin-bottom: 8px; }\n    p.sub { color: #64748b; font-size: 0.875rem; margin-top: 0; margin-bottom: 24px; }\n    .field { margin-bottom: 20px; }\n    label { display: block; font-size: 0.875rem; font-weight: 600; margin-bottom: 6px; }\n    input { width: 100%; box-sizing: border-box; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem; transition: border-color 0.15s, box-shadow 0.15s; }\n    input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15); }\n    input[aria-invalid=\"true\"] { border-color: var(--error); }\n    .err-msg { color: var(--error); font-size: 0.8rem; margin-top: 4px; display: none; }\n    .err-msg[aria-hidden=\"false\"] { display: block; }\n    button[type=\"submit\"] { width: 100%; background: var(--primary); color: #fff; border: none; border-radius: 6px; padding: 12px; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: background 0.15s; }\n    button[type=\"submit\"]:hover { background: #4338ca; }\n    button[type=\"submit\"]:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }\n  </style>\n</head>\n<body>\n  <main class=\"card\">\n    <h1>Sign in to your account</h1>\n    <p class=\"sub\">Enter your student credentials to proceed.</p>\n    <form id=\"loginForm\" novalidate>\n      <div class=\"field\">\n        <label for=\"userEmail\">Email address</label>\n        <input type=\"email\" id=\"userEmail\" name=\"email\" autocomplete=\"email\" aria-required=\"true\" aria-describedby=\"emailFeedback\" />\n        <div id=\"emailFeedback\" class=\"err-msg\" role=\"alert\" aria-hidden=\"true\">Please provide a valid email format (e.g. name@domain.edu).</div>\n      </div>\n      <div class=\"field\">\n        <label for=\"userPassword\">Password</label>\n        <input type=\"password\" id=\"userPassword\" name=\"password\" autocomplete=\"current-password\" aria-required=\"true\" aria-describedby=\"passwordFeedback\" />\n        <div id=\"passwordFeedback\" class=\"err-msg\" role=\"alert\" aria-hidden=\"true\">Password must contain at least 8 characters.</div>\n      </div>\n      <button type=\"submit\" id=\"submitBtn\">Sign in</button>\n    </form>\n  </main>\n  <script>\n    const form = document.getElementById('loginForm');\n    const email = document.getElementById('userEmail');\n    const pass = document.getElementById('userPassword');\n    const emailErr = document.getElementById('emailFeedback');\n    const passErr = document.getElementById('passwordFeedback');\n\n    const emailRegex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;\n\n    function validateEmail() {\n      const valid = emailRegex.test(email.value.trim());\n      email.setAttribute('aria-invalid', !valid);\n      emailErr.setAttribute('aria-hidden', valid);\n      return valid;\n    }\n\n    function validatePassword() {\n      const valid = pass.value.length >= 8;\n      pass.setAttribute('aria-invalid', !valid);\n      passErr.setAttribute('aria-hidden', valid);\n      return valid;\n    }\n\n    email.addEventListener('blur', validateEmail);\n    pass.addEventListener('blur', validatePassword);\n\n    form.addEventListener('submit', (e) => {\n      e.preventDefault();\n      const isEmailOk = validateEmail();\n      const isPassOk = validatePassword();\n      if (isEmailOk && isPassOk) {\n        alert('Validation passed! Submitting form.');\n      }\n    });\n  </script>\n</body>\n</html>",
+      "explanation": "Comprehensive semantic login page with full ARIA live error association, blur validation, responsive grid viewport, and WCAG AA focus rings.",
+      "attempt_number": 1,
+      "status": "human_verified",
+      "created_at": "2026-10-10T14:00:00Z",
+      "updated_at": "2026-10-12T16:00:00Z"
+    }
+  ],
+  "assessments": [
+    {
+      "id": "asmt_alice_tm_1",
+      "submission_id": "sub_alice_tm_1",
+      "challenge_id": "ch_task_manager",
+      "student_id": "usr_alice_chen",
+      "model_identifier": "gemini-3.8-flash",
+      "overall_score": 68,
+      "assessment_status": "needs_work",
+      "criteria": [
+        {
+          "criterion_id": "crit_task_func",
+          "name": "Required Functionality & State Management",
+          "score": 24,
+          "max_score": 35,
+          "evidence": "Implemented basic task push, toggle, deletion, and stored to localStorage: `taskList.push(...)` and `localStorage.setItem(...)`.",
+          "feedback": "Task addition and deletion work, but filter tabs (\"All\", \"Active\", \"Completed\") and active task counter were completely omitted."
+        },
+        {
+          "criterion_id": "crit_task_arch",
+          "name": "Code Correctness & Architecture",
+          "score": 18,
+          "max_score": 25,
+          "evidence": "Global `const taskList = [];` with inline event handlers in HTML strings `onclick=\"toggleTask(${t.id})\"`.",
+          "feedback": "Avoid inline HTML string onclick handlers. Also missing safe JSON parsing on load in case localStorage contains corrupt data."
+        },
+        {
+          "criterion_id": "crit_task_ui",
+          "name": "UI & Responsive Interaction",
+          "score": 13,
+          "max_score": 20,
+          "evidence": "Basic createElement inside `render()` loop; no empty state or keyboard accessibility.",
+          "feedback": "No visual distinction between empty task list and loaded items. Needs keyboard listeners (e.g. Enter to add)."
+        },
+        {
+          "criterion_id": "crit_task_validation",
+          "name": "Input Validation & Edge Cases",
+          "score": 6,
+          "max_score": 10,
+          "evidence": "`if (title === \"\") return;`",
+          "feedback": "Only checks for empty string; fails to trim whitespace, meaning users can submit empty spaces. No duplicate task prevention."
+        },
+        {
+          "criterion_id": "crit_task_readability",
+          "name": "Readability & Maintainability",
+          "score": 7,
+          "max_score": 10,
+          "evidence": "Functions are short and understandable with self-descriptive names.",
+          "feedback": "Good straightforward logic, but would benefit from encapsulating in a class or modular state store."
+        }
+      ],
+      "strengths": [
+        "Successfully persists task array to browser localStorage on modification.",
+        "Clear, readable procedural functions for adding, toggling, and removing tasks."
+      ],
+      "improvements": [
+        "Sanitize input using `.trim()` and prevent duplicate task entries.",
+        "Implement the required filter tabs (All, Active, Completed) and task counter.",
+        "Replace inline `onclick` string handlers with standard `addEventListener`."
+      ],
+      "limitations": [
+        "Static AST and source code inspection performed; runtime DOM events simulated."
+      ],
+      "generated_at": "2026-10-14T11:22:00Z"
+    },
+    {
+      "id": "asmt_alice_tm_2",
+      "submission_id": "sub_alice_tm_2",
+      "challenge_id": "ch_task_manager",
+      "student_id": "usr_alice_chen",
+      "model_identifier": "gemini-3.8-flash",
+      "overall_score": 88,
+      "assessment_status": "passed",
+      "criteria": [
+        {
+          "criterion_id": "crit_task_func",
+          "name": "Required Functionality & State Management",
+          "score": 32,
+          "max_score": 35,
+          "evidence": "Implemented class `TaskApp` with `addTask`, `toggleTask`, `deleteTask`, `setFilter`, `getFilteredTasks()`, and dynamic active item counter.",
+          "feedback": "All core features implemented with fidelity. Clean filter tabs and reactive active item counter."
+        },
+        {
+          "criterion_id": "crit_task_arch",
+          "name": "Code Correctness & Architecture",
+          "score": 23,
+          "max_score": 25,
+          "evidence": "Safe loading with try/catch fallback in `loadSafe()`: `try { return data ? JSON.parse(data) : []; } catch (e) { ... }`",
+          "feedback": "Excellent error handling on JSON parsing and modular event listeners attached via `addEventListener`."
+        },
+        {
+          "criterion_id": "crit_task_ui",
+          "name": "UI & Responsive Interaction",
+          "score": 17,
+          "max_score": 20,
+          "evidence": "Dynamic empty state (`No tasks yet. Add one above!`), Enter key binding in `bindEvents()`, and `aria-label` on delete buttons.",
+          "feedback": "High accessibility discipline with explicit labels and empty states. Could add smooth exit animation on delete."
+        },
+        {
+          "criterion_id": "crit_task_validation",
+          "name": "Input Validation & Edge Cases",
+          "score": 9,
+          "max_score": 10,
+          "evidence": "`const title = rawTitle.trim(); if (!title) ...` and case-insensitive duplicate check: `this.tasks.some(t => t.title.toLowerCase() === title.toLowerCase())`.",
+          "feedback": "Robust edge-case handling with clear visual error messaging rendered via `showError`."
+        },
+        {
+          "criterion_id": "crit_task_readability",
+          "name": "Readability & Maintainability",
+          "score": 7,
+          "max_score": 10,
+          "evidence": "Well-structured ES6 class with separation between state storage, validation, rendering, and DOM event binding.",
+          "feedback": "Highly maintainable, readable code following modern frontend development best practices."
+        }
+      ],
+      "strengths": [
+        "Comprehensive resolution of Attempt 1 weaknesses: added duplicate checking, whitespace trimming, and filter tabs.",
+        "Defensive programming with `try/catch` wrapped localStorage access preventing corrupt data crashes.",
+        "Accessible DOM output including `aria-label` for delete buttons and `select-none` on checkboxes."
+      ],
+      "improvements": [
+        "Consider adding an edit task in-place feature for advanced interaction.",
+        "Could abstract DOM rendering to a template helper or lightweight component pattern."
+      ],
+      "limitations": [
+        "Static evaluation conducted on provided JavaScript source code."
+      ],
+      "generated_at": "2026-10-18T16:48:00Z"
+    },
+    {
+      "id": "asmt_alice_login_1",
+      "submission_id": "sub_alice_login_1",
+      "challenge_id": "ch_login_page",
+      "student_id": "usr_alice_chen",
+      "model_identifier": "gemini-3.8-flash",
+      "overall_score": 92,
+      "assessment_status": "passed",
+      "criteria": [
+        {
+          "criterion_id": "crit_login_func",
+          "name": "Required Functionality & Form Handling",
+          "score": 33,
+          "max_score": 35,
+          "evidence": "`form.addEventListener(\"submit\", (e) => { e.preventDefault(); ... })`, regex format test, length check.",
+          "feedback": "Complete form interception, custom email regex validation, password length constraint."
+        },
+        {
+          "criterion_id": "crit_login_a11y",
+          "name": "Semantic HTML & Accessibility",
+          "score": 24,
+          "max_score": 25,
+          "evidence": "Explicit `label for=\"userEmail\"`, `aria-describedby=\"emailFeedback\"`, `aria-invalid`, `role=\"alert\"`, and `:focus-visible` styling.",
+          "feedback": "Outstanding accessibility implementation with ARIA attributes and visible focus indicators."
+        },
+        {
+          "criterion_id": "crit_login_responsive",
+          "name": "UI & Responsive Layout",
+          "score": 18,
+          "max_score": 20,
+          "evidence": "`body { display: grid; place-items: center; padding: 16px; }` and `.card { width: 100%; max-width: 420px; }`.",
+          "feedback": "Fluid grid centering that handles small mobile screens naturally without horizontal scrolling."
+        },
+        {
+          "criterion_id": "crit_login_validation",
+          "name": "Input Validation & Edge Cases",
+          "score": 9,
+          "max_score": 10,
+          "evidence": "Blur event validation on email and password inputs with trim sanitization.",
+          "feedback": "Instant blur feedback allows users to correct mistakes before submitting."
+        },
+        {
+          "criterion_id": "crit_login_code",
+          "name": "Code Cleanliness & Maintainability",
+          "score": 8,
+          "max_score": 10,
+          "evidence": "CSS variables used for palette, semantic markup, concise JavaScript functions.",
+          "feedback": "Very clean vanilla code structure with clear intent and zero external bloat."
+        }
+      ],
+      "strengths": [
+        "Exceptional accessibility discipline with `role=\"alert\"`, `aria-describedby`, and `aria-invalid`.",
+        "Fluid mobile-first card layout that scales seamlessly without breaking viewport bounds."
+      ],
+      "improvements": [
+        "Add a \"show/hide password\" toggle for enhanced mobile usability.",
+        "Add visual loading spinner to submit button during submission."
+      ],
+      "limitations": [
+        "Static DOM and CSS rule inspection; responsive behavior verified via viewport CSS metrics."
+      ],
+      "generated_at": "2026-10-10T14:05:00Z"
+    }
+  ],
+  "mentor_reviews": [
+    {
+      "id": "rev_alice_login_1",
+      "submission_id": "sub_alice_login_1",
+      "mentor_id": "usr_mentor_sarah",
+      "mentor_name": "Dr. Sarah Marcus",
+      "mentor_title": "Lead Technical Mentor, Stanford Web Systems Lab",
+      "verification_status": "verified",
+      "feedback": "Verified clean, production-grade responsive form implementation. Tested accessibility attributes with NVDA screen reader conventions: proper aria-live and role=\"alert\" alerts fire predictably on blur, and mobile viewport scales down to 320px without layout distortion.",
+      "criteria_confirmed": true,
+      "reviewed_at": "2026-10-12T16:00:00Z"
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "name": "SkillProof",
+  "description": "Prove what you can actually do. Practical developer challenges, rubric-based AI evaluation, and shareable verified evidence portfolios.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
